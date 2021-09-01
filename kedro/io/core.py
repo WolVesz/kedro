@@ -166,9 +166,11 @@ class AbstractDataSet(abc.ABC):
 
         """
         try:
+            logging.info("STARTING Parse_dataset_definition")
             class_obj, config = parse_dataset_definition(
                 config, load_version, save_version
             )
+            logging.info("Completed Parse_dataset_definition")
         except Exception as exc:
             raise DataSetError(
                 "An exception occurred when parsing config "
@@ -176,7 +178,9 @@ class AbstractDataSet(abc.ABC):
             ) from exc
 
         try:
+            logging.info("Creating class_object with config")
             data_set = class_obj(**config)  # type: ignore
+            logging.info("Created class_object")
         except TypeError as err:
             raise DataSetError(
                 f"\n{err}.\nDataSet '{name}' must only contain arguments valid for the "

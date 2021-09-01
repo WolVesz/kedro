@@ -304,6 +304,9 @@ class DataCatalog:
             >>> df = catalog.load("cars")
             >>> catalog.save("boats", df)
         """
+
+        logging.info("ENTERING DATA CATALOG FROM_CONFIG")
+
         data_sets = {}
         catalog = copy.deepcopy(catalog) or {}
         credentials = copy.deepcopy(credentials) or {}
@@ -318,13 +321,18 @@ class DataCatalog:
                 f"are not found in the catalog."
             )
 
+        logging.info('ENTERING DATA CATALOG FOR LOOP')
         layers = defaultdict(set)  # type: Dict[str, Set[str]]
         for ds_name, ds_config in catalog.items():
+            logging.info(f"STARTING: {ds_name} with {ds_config}")
             ds_layer = ds_config.pop("layer", None)
             if ds_layer is not None:
+                logging.info(f"LAYER FOR {ds_name}: {ds_layer}")
                 layers[ds_layer].add(ds_name)
 
+            logging.info(f"RESOLVING CREDENTIALS FOR {ds_name}")
             ds_config = _resolve_credentials(ds_config, credentials)
+            logging.info(f"RESOLVED CREDENTIALS. ENTERING ABSTRACT DATASET for {ds_name}")
             data_sets[ds_name] = AbstractDataSet.from_config(
                 ds_name, ds_config, load_versions.get(ds_name), save_version
             )

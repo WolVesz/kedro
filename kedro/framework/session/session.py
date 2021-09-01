@@ -357,15 +357,20 @@ class KedroSession:
         # pylint: disable=protected-access,no-member
         # Report project name
         logging.info("** Kedro project %s", self._project_path.name)
+        logging.info("STARTING RUN PROCESS")
 
         save_version = run_id = self.store["session_id"]
         extra_params = self.store.get("extra_params") or {}
         context = self.load_context()
 
+        logging.info("LOADED CONTEXT")
+
         name = pipeline_name or "__default__"
 
         try:
             pipeline = pipelines[name]
+            logging.info("PIPELINE CREATED.")
+
         except KeyError as exc:
             raise KedroContextError(
                 f"Failed to find the pipeline named '{name}'. "
@@ -383,6 +388,8 @@ class KedroSession:
             to_outputs=to_outputs,
         )
 
+        logging.info("FILTERED PIPELINE")
+
         record_data = {
             "run_id": run_id,
             "project_path": self._project_path.as_posix(),
@@ -398,6 +405,8 @@ class KedroSession:
             "extra_params": extra_params,
             "pipeline_name": pipeline_name,
         }
+
+        logging.info("Entering _get_catalog")
 
         catalog = context._get_catalog(
             save_version=save_version, load_versions=load_versions

@@ -384,8 +384,11 @@ class KedroContext:
                 f"got `{type(catalog).__name__}` instead."
             )
 
+        logging.info("ENTERING _get_feed_dict")
         feed_dict = self._get_feed_dict()
         catalog.add_feed_dict(feed_dict)
+
+
         if catalog.layers:
             _validate_layers_for_transcoding(catalog)
         hook_manager = get_hook_manager()
@@ -482,7 +485,10 @@ class KedroContext:
                 for key, val in param_value.items():
                     _add_param_to_feed_dict(f"{param_name}.{key}", val)
 
+        logging.info("ENTERING CONTEXT ADD_PARAM_TO_FEED_DICT")
+
         for param_name, param_value in params.items():
+            logging.info(f" param to build{param_name}, {param_value}")
             _add_param_to_feed_dict(param_name, param_value)
 
         return feed_dict
