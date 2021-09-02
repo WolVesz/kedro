@@ -243,10 +243,16 @@ class ConfigLoader:
                     f"or is not a valid directory: {conf_path}"
                 )
 
+            logging.info("IN GET. STARTGIN __LOOKUP_CONFIG_FILE_PATHS")
             config_filepaths = self._lookup_config_filepaths(
                 Path(conf_path), patterns, processed_files
             )
+
+            logging.info("COMPLETED _LOOKUP_CONFIG_FILE_PATHS. STARTING _LOAD_CONFIGS.")
+
             new_conf = self._load_configs(config_filepaths)
+
+            logging.info("COMPLETED _LOAD_CONFIGS.")
 
             common_keys = config.keys() & new_conf.keys()
             if common_keys:
@@ -259,6 +265,8 @@ class ConfigLoader:
 
             config.update(new_conf)
             processed_files |= set(config_filepaths)
+
+            logging.info("COMPLETED CONFIG UPDATE")
 
         if not processed_files:
             raise MissingConfigException(
