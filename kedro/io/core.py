@@ -403,7 +403,7 @@ def parse_dataset_definition(
     save_version = save_version or generate_timestamp()
     logging.info("CREATING DEEP COPY IN CORE")
     config = copy.deepcopy(config)
-    logginig.info("DEEP COPY CREATED")
+    logging.info("DEEP COPY CREATED")
 
     if "type" not in config:
         raise DataSetError("`type` is missing from DataSet catalog configuration")
