@@ -47,10 +47,14 @@ def load_obj(obj_path: str, default_obj_path: str = "") -> Any:
         AttributeError: When the object does not have the given named attribute.
 
     """
+    logging.info("ENTERING LOAD_OBJ")
     obj_path_list = obj_path.rsplit(".", 1)
     obj_path = obj_path_list.pop(0) if len(obj_path_list) > 1 else default_obj_path
     obj_name = obj_path_list[0]
+    logging.info("IMPORTING MODULE BASED ON OBJ PATH")
     module_obj = importlib.import_module(obj_path)
+    logging.info("IMPORTED MODULE BASED ON OBJ PATH")
     if not hasattr(module_obj, obj_name):
         raise AttributeError(f"Object `{obj_name}` cannot be loaded from `{obj_path}`.")
+    logging.info("BEGINNING GETATTR FOR IMPORTED MODULE")
     return getattr(module_obj, obj_name)

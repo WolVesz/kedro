@@ -191,6 +191,7 @@ class AbstractDataSet(abc.ABC):
                 f"\n{err}.\nFailed to instantiate DataSet '{name}' "
                 f"of type `{class_obj.__module__}.{class_obj.__qualname__}`."
             ) from err
+        logging.info("COMPLETED CREATION OF ABSTRACT DATASET.")
         return data_set
 
     @property
@@ -400,7 +401,9 @@ def parse_dataset_definition(
         2-tuple: (Dataset class object, configuration dictionary)
     """
     save_version = save_version or generate_timestamp()
+    logging.info("CREATING DEEP COPY IN CORE")
     config = copy.deepcopy(config)
+    logginig.info("DEEP COPY CREATED")
 
     if "type" not in config:
         raise DataSetError("`type` is missing from DataSet catalog configuration")
@@ -415,6 +418,7 @@ def parse_dataset_definition(
 
         class_paths = (prefix + class_obj for prefix in _DEFAULT_PACKAGES)
 
+        logging.info("LOADING OBJECT IN CORE")
         trials = (_load_obj(class_path) for class_path in class_paths)
         try:
             class_obj = next(obj for obj in trials if obj is not None)
@@ -446,9 +450,11 @@ def parse_dataset_definition(
 
 
 def _load_obj(class_path: str) -> Optional[object]:
+    logging.info("STARTING _LOAD_OBJ")
     mod_path, _, class_name = class_path.rpartition(".")
     try:
         available_classes = load_obj(f"{mod_path}.__all__")
+        logging.info("COMPLETED LOAD_OBJ AND ACQUIRED ATTRBUTE AS AVAIBLE CLASSES")
     # ModuleNotFoundError: When `load_obj` can't find `mod_path` (e.g `kedro.io.pandas`)
     #                      this is because we try a combination of all prefixes.
     # AttributeError: When `load_obj` manages to load `mod_path` but it doesn't have an
@@ -457,7 +463,9 @@ def _load_obj(class_path: str) -> Optional[object]:
         available_classes = None
 
     try:
+        logging.info("CREATING CLASS_OBJ by LOADING CLASS_PATH")
         class_obj = load_obj(class_path)
+        logging.info("CREATED CLASS_OBJ")
     except (ModuleNotFoundError, ValueError):
         return None
     except AttributeError as exc:
